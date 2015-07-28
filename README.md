@@ -4,7 +4,7 @@ __clang-as-ios-dylib__ is a workaround for building iOS dynamic libraries from X
 
 It works by tricking Xcode into building an OS X dynamic library as if it were an iOS dynamic library.  By overriding  __CC__ and __LD__, we make Xcode call a wrapper script instead of directly calling __clang__, and our wrapper swaps  the OS X compile flags for iOS flags.
 
-_Only iphonesimulator dylibs are supported now, but it would be possible to add device support if needed._
+~~Only iphonesimulator dylibs are supported now, but it would be possible to add device support if needed.~~ Now it is already added device support.
 
 ## Usage
 
@@ -14,13 +14,13 @@ _Only iphonesimulator dylibs are supported now, but it would be possible to add 
 cd Vendor
 mkdir clang-as-ios-dylib
 cd clang-as-ios-dylib
-curl -L https://github.com/facebook/clang-as-ios-dylib/archive/master.tar.gz | tar zxvf - --strip-components=1
+curl -L https://github.com/Dengz/clang-as-ios-dylib/archive/master.tar.gz | tar zxvf - --strip-components=1
   ```
 
 
 1. In Xcode, create a new __OS X Cocoa Library__ target.
 
-1. In the project, create a new __Configuration Settings File (.xcconfig)__ file with the following contents:
+1. In the project, if you want to build on simulator, create a new __Configuration Settings File (.xcconfig)__ file with the following contents:
   ```sh
   // The following can be one of 'latest', 'earliest', or a specific
   // SDK version like '7.0', or '6.1'.
@@ -32,6 +32,19 @@ curl -L https://github.com/facebook/clang-as-ios-dylib/archive/master.tar.gz | t
   LD = $(CAID_LINKS_PATH)/ld-iphonesimulator-$(CAID_BASE_SDK_VERSION)-targeting-$(CAID_IPHONEOS_DEPLOYMENT_TARGET)
   CC = $(CAID_LINKS_PATH)/cc-iphonesimulator-$(CAID_BASE_SDK_VERSION)-targeting-$(CAID_IPHONEOS_DEPLOYMENT_TARGET)
   ```
+If you wanna build on devices, just change to following contents:
+  ```sh
+  // The following can be one of 'latest', 'earliest', or a specific
+  // SDK version like '7.0', or '6.1'.
+  CAID_BASE_SDK_VERSION = latest
+  CAID_IPHONEOS_DEPLOYMENT_TARGET = latest
+  
+  CAID_LINKS_PATH = $(PROJECT_DIR)/../Vendor/clang-as-ios-dylib/links
+  
+  LD = $(CAID_LINKS_PATH)/ld-iphoneos-$(CAID_BASE_SDK_VERSION)-targeting-$(CAID_IPHONEOS_DEPLOYMENT_TARGET)
+  CC = $(CAID_LINKS_PATH)/cc-iphoneos-$(CAID_BASE_SDK_VERSION)-targeting-$(CAID_IPHONEOS_DEPLOYMENT_TARGET)
+  ```
+
 
 1. In your project’s __Info__ settings panel, for each build configuration, select the xcconfig file created in #2 for your target.
 
