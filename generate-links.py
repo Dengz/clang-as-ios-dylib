@@ -36,3 +36,11 @@ for sdk_version in versions:
                     print '%s (creating)' % name
                     os.symlink('../clang-as-ios-dylib.py', name)
 
+		name = 'links/%s%s-iphoneos-%s-targeting-%s' % (
+                    clang_name_prefix, tool, sdk_version, deployment_target)
+
+		if os.path.exists(name):
+                    print '%s (exists)' % name
+                else:
+                    print '%s (creating)' % name
+                    os.symlink('../clang-as-ios-dylib.py', name)
